@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-PROJECT_NAME=demo
+PROJECT_NAME=$(cat .project-name)
