@@ -15,7 +15,7 @@ PATH_VENDORS="$PATH_REPO_ROOT/vendor"
 PATH_GODOT="$(realpath "$(which $(cat .godot-path))")"
 echo "godot executable located at $PATH_GODOT"
 
-if [[ -f "$PATH_REPO_ROOT"/godot ]]; then
+if [[ -L "$PATH_REPO_ROOT"/godot ]]; then
     rm "$PATH_REPO_ROOT"/godot
 fi
 ln -s $PATH_GODOT godot
