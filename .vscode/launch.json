@@ -5,6 +5,35 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Debug GDExtension in Player",
+            "type": "lldb",
+            "request": "launch",
+            "preLaunchTask": "build-current-debug",
+            "program": "./godot",
+            "args": [
+                "--verbose",
+                "--path",
+                "${workspaceFolder}/project"
+            ],
+            "cwd": "${workspaceFolder}",
+            "stopOnEntry": false
+        },
+        {
+            "name": "Debug GDExtension in Editor",
+            "type": "lldb",
+            "request": "launch",
+            "preLaunchTask": "build-current-debug",
+            "program": "./godot",
+            "args": [
+                "--verbose",
+                "--editor",
+                "--path",
+                "${workspaceFolder}/project"
+            ],
+            "cwd": "${workspaceFolder}",
+            "stopOnEntry": false
+        },
+        {
             "name": "Debug GDExtension in Player (Linux)",
             "type": "lldb",
             "request": "launch",
@@ -13,7 +42,7 @@
             "args": [
                 "--verbose",
                 "--path",
-                "${workspaceFolder}/demo"
+                "${workspaceFolder}/project"
             ],
             "cwd": "${workspaceFolder}",
             "stopOnEntry": false
@@ -28,7 +57,36 @@
                 "--verbose",
                 "--editor",
                 "--path",
-                "${workspaceFolder}/demo"
+                "${workspaceFolder}/project"
+            ],
+            "cwd": "${workspaceFolder}",
+            "stopOnEntry": false
+        },
+        {
+            "name": "Debug GDExtension in Player (Windows)",
+            "type": "lldb",
+            "request": "launch",
+            "preLaunchTask": "build-windows-debug",
+            "program": "./godot",
+            "args": [
+                "--verbose",
+                "--path",
+                "${workspaceFolder}/project"
+            ],
+            "cwd": "${workspaceFolder}",
+            "stopOnEntry": false
+        },
+        {
+            "name": "Debug GDExtension in Editor (Windows)",
+            "type": "lldb",
+            "request": "launch",
+            "preLaunchTask": "build-windows-debug",
+            "program": "./godot",
+            "args": [
+                "--verbose",
+                "--editor",
+                "--path",
+                "${workspaceFolder}/project"
             ],
             "cwd": "${workspaceFolder}",
             "stopOnEntry": false

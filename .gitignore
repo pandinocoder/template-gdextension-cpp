@@ -2,11 +2,15 @@
 .scons-cache/
 *.os
 *.o
+*.obj
 
 # SConstruct
 .sconf_temp
 .sconsign.dblite
 *.pyc
+
+# Python
+__pycache__
 
 # MacOS
 .DS_Store
@@ -20,14 +24,14 @@ build/
 /extension_api.json
 /godot
 /godot-mono
+/.godot-path
 /data
 
 .cache/clangd
 
 extensions/*/bin
 extensions/*/src/gen
-
-.godot-path
+*/extensions/*/bin
 
 *.code-workspace
 

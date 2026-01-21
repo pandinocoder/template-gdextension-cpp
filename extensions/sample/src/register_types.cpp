@@ -1,6 +1,10 @@
 #include "register_types.h"
 
 #include "sample_node_2d.h"
+#include "sample_ref_counted.h"
+
+#include <godot/print.h>
+#include <godot/stl.h>
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/class_db.hpp>
@@ -12,21 +16,30 @@ using namespace godot;
 
 namespace sample {
     void initialize_extension(ModuleInitializationLevel p_level) {
+        ::godot::fprint("initialize_extension(%d)", p_level);
+
         if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
             return;
         }
 
-        UtilityFunctions::print("Initializing libsample GDExtension...");
+        ::godot::fprint("Initializing libsample GDExtension...");
 
         GDREGISTER_CLASS(SampleNode2D);
+        GDREGISTER_CLASS(SampleRefCounted);
+
+        ::godot::fprint("Initialized libsample GDExtension.");
     }
 
     void destroy_extension(ModuleInitializationLevel p_level) {
+        ::godot::fprint("destroy_extension(%d)", p_level);
+
         if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
             return;
         }
 
-        UtilityFunctions::print("Destroying libsample GDExtension...");
+        ::godot::fprint("Destroying libsample GDExtension...");
+
+        ::godot::fprint("Destroyed libsample GDExtension...");
     }
 }
 
