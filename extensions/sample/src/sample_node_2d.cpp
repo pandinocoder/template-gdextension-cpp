@@ -16,22 +16,29 @@ void SampleNode2D::_bind_methods() {
         "p_value"
     );
 
-    BIND_PROPERTY(
-        ::godot::PropertyInfo(::godot::Variant::FLOAT, "angle_reload"),
-        "get_angle_reload",
-        &SampleNode2D::get_angle_reload,
-        "set_angle_reload",
-        &SampleNode2D::set_angle_reload,
-        "p_value"
-    );
+    // BIND_PROPERTY(
+    //     ::godot::PropertyInfo(::godot::Variant::FLOAT, "angle_reload"),
+    //     "get_angle_reload",
+    //     &SampleNode2D::get_angle_reload,
+    //     "set_angle_reload",
+    //     &SampleNode2D::set_angle_reload,
+    //     "p_value"
+    // );
 }
 
-void SampleNode2D::_process(double delta) {
-    _angle += delta * Math_PI / 2.0;
-    set_position(Vector2(
-        Math::sin((real_t)_angle) * 128.0,
-        Math::cos((real_t)_angle) * 128.0
-    ));
+void SampleNode2D::_notification(int64_t p_what) {
+    switch (p_what) {
+        case NOTIFICATION_PROCESS:
+        {
+            const auto delta = get_process_delta_time();
+            _angle += delta * Math_PI / 2.0;
+            set_position(Vector2(
+                Math::sin((real_t)_angle) * 128.0,
+                Math::cos((real_t)_angle) * 128.0
+            ));
+            break;
+        }
+    }
 }
 
 SampleNode2D::SampleNode2D() {

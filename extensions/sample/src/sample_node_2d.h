@@ -14,11 +14,11 @@ namespace sample {
     protected:
         static void _bind_methods();
 
+        void _notification(int64_t p_what);
+
     public:
         SampleNode2D();
         ~SampleNode2D();
-
-        void _process(double delta) override;
 
         ::godot::real_t get_angle() const;
         void set_angle(::godot::real_t p_value);
