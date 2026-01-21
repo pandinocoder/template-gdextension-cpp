@@ -11,14 +11,6 @@ from pathlib import Path
 localEnv = Environment(tools=["default"], PLATFORM="")
 
 opts = Variables(None, ARGUMENTS)
-opts.Add(
-    PathVariable(
-        key="path_project",
-        default=None,
-        help="The path to the project directory where the compiled extension binaries should be installed to",
-        validator=PathVariable.PathIsDir,
-    )
-)
 opts.Update(localEnv)
 
 env = localEnv.Clone()
@@ -140,17 +132,18 @@ for extension_path in glob("extensions/*/*.gdextension"):
     extension_install_path = "project/extensions/{}".format(extension_name)
     extension_install_bin_path = "{}/bin".format(extension_install_path)
 
-    extension_install = env.Install(
-        extension_install_path,
-        [
-            *extension_metadata,
-        ]
-    )
-
-    extension_install = env.Install(
-        extension_install_bin_path,
-        extension_library,
-    )
+    print_notice('Installing metadata files to %s...' % extension_install_path, dim=True)
+    print_notice('Installing binaries to %s... %s' % (extension_install_bin_path, extension_library), dim=True)
+    extension_install = [
+        env.Install(
+            extension_install_path,
+            extension_metadata,
+        ),
+        env.Install(
+            extension_install_bin_path,
+            extension_library,
+        )
+    ]
 
     default_args = [
         extension_library,

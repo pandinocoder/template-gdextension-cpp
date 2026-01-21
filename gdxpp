@@ -36,7 +36,6 @@ parser_build.add_argument('-c', '--cores', type=int, default=0, help='number of 
 parser_build.add_argument('--debug-symbols', action=argparse.BooleanOptionalAction, default=True, help='if debug symbols should be included, default true')
 parser_build.add_argument('--dev-build', action=argparse.BooleanOptionalAction, help='if the build should be dev mode')
 parser_build.add_argument('--exceptions', action=argparse.BooleanOptionalAction, default=True, help='if C++ exceptions should be enabled, default true')
-parser_build.add_argument('-o', '--output', type=pathlib.Path, default='project/extensions', help='the extensions output directory, default "<cwd>/project/extensions"')
 parser_build.add_argument('-p', '--platform', type=Platform, choices=Platform.get_available_choices(), help='the platform to compile for (allows cross-compilation), defaults to the current system')
 parser_build.add_argument('--skip-godot-cpp', action=argparse.BooleanOptionalAction, default=False, help='if godot-cpp should be compiled before the extensions (by default it will be)')
 parser_build.add_argument('-t', '--target', choices=['debug', 'release'], default='debug', help='the Godot build template to use, default release (debug and release are shorthand for template_debug and template_release respectively)')
@@ -130,7 +129,6 @@ match opts.subcommand:
         try:
             extensions_scons_args = [
                 *scons_args,
-                'path_project=%s' % opts.output,
             ]
             print_debug('Building extensions with "scons', *extensions_scons_args, '" in "%s"...' % path_repo_root)
             extensions_scons_process = subprocess.Popen(

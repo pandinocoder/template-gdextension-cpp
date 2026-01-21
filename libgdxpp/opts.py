@@ -34,7 +34,6 @@ class Opts(argparse.Namespace):
     debug_symbols: bool
     dev_build: bool
     exceptions: bool
-    output: pathlib.Path
     platform: Platform
     skip_godot_cpp: bool
     target: str
@@ -74,8 +73,6 @@ class Opts(argparse.Namespace):
         self.target = target
 
         self.dev_build = dev_build
-
-        self.output = self.output.resolve(strict=True)
 
         if self.use_hot_reload == None:
             self.use_hot_reload = target != "template_release"

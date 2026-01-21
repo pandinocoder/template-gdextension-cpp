@@ -1,11 +1,9 @@
 @tool
-class_name SampleSpriteContainer
-extends SampleNode2D
+extends Node2D
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	#SampleRefCounted.create()
 	pass # Replace with function body.
 
 

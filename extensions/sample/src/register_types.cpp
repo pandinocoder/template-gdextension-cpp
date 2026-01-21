@@ -25,7 +25,7 @@ namespace sample {
         ::godot::fprint("Initializing libsample GDExtension...");
 
         GDREGISTER_CLASS(SampleNode2D);
-        GDREGISTER_CLASS(SampleRefCounted);
+        // GDREGISTER_CLASS(SampleRefCounted);
 
         ::godot::fprint("Initialized libsample GDExtension.");
     }
