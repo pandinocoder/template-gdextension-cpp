@@ -39,13 +39,13 @@
         },
         {
             "label": "build-windows-debug",
-            "command": "${workspaceFolder}/gdxpp build -p=windows -t=debug",
+            "command": "${workspaceFolder}/gdxpp.py build -p=windows -t=debug",
             "type": "shell",
             "group": "build"
         },
         {
             "label": "build-windows-release",
-            "command": "${workspaceFolder}/gdxpp build -p=windows -t=release",
+            "command": "${workspaceFolder}/gdxpp.py build -p=windows -t=release",
             "type": "shell",
             "group": "build"
         }
