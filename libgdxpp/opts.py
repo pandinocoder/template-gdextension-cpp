@@ -78,7 +78,7 @@ class Opts(argparse.Namespace):
             self.use_hot_reload = target != "template_release"
 
         if self.use_static_cpp == None:
-            self.use_static_cpp = target == "template_release"
+            self.use_static_cpp = target == "template_release" or self.platform == Platform.Windows
 
 #endregion Build Options
 
