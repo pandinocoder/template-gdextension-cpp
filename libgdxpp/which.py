@@ -1,6 +1,6 @@
-import subprocess
 import os
 import platform
+import subprocess
 
 from pathlib import Path
 from libgdxpp.stdio import *
@@ -8,6 +8,10 @@ from libgdxpp.stdio import *
 __is_windows__ = platform.system() == 'Windows'
 
 def __which(name: str, platform_which: str) -> Path:
+    name_as_path = Path(name)
+    if name_as_path.exists():
+        return name_as_path
+
     try:
         result: str = subprocess.check_output(
             [platform_which, name],
@@ -18,12 +22,6 @@ def __which(name: str, platform_which: str) -> Path:
     except Exception as err:
         if platform_which == 'where':
             return __which(name, 'which')
-        elif __is_windows__:
-            print_warning('Failed to use where/which to get the exact path of "%s":\n\t%s' % (
-                name,
-                err,
-            ))
-            return name
         return None
 
 def which(name: str) -> Path:
