@@ -1,6 +1,17 @@
-from colorama import Fore, Style
+from colorama import ansi, Fore, Style
 from os import linesep
 from sys import stderr, stdout
+
+STYLE_ITALIC = ansi.code_to_chars(3)
+STYLE_NO_ITALIC = ansi.code_to_chars(23)
+STYLE_UNDERLINE = ansi.code_to_chars(4)
+STYLE_NO_UNDERLINE = ansi.code_to_chars(24)
+
+def italic(text: str) -> str:
+    return STYLE_ITALIC + text + STYLE_NO_ITALIC
+
+def underline(text: str) -> str:
+    return STYLE_UNDERLINE + text + STYLE_NO_UNDERLINE
 
 def indent_lines(*lines: str, indent = '\t'):
     indented_lines = []
@@ -39,7 +50,7 @@ def print_debug(
     flush: bool = False,
 ) -> None:
     __print(values, sep=sep, end=end, file=file, flush=flush,
-        prefix=Style.DIM,
+        prefix=Fore.LIGHTBLACK_EX + '[DBG] ' + STYLE_ITALIC,
     )
 
 def print_info(
@@ -51,7 +62,7 @@ def print_info(
     dim: bool = False,
 ) -> None:
     __print(values, sep=sep, end=end, file=file, flush=flush,
-        prefix=Style.RESET_ALL + (Style.DIM if dim else ''),
+        prefix=Style.RESET_ALL + (Style.DIM if dim else '') + '[INF] ',
     )
 
 def print_notice(
@@ -63,7 +74,7 @@ def print_notice(
     dim: bool = False,
 ) -> None:
     __print(values, sep=sep, end=end, file=file, flush=flush,
-        prefix=Fore.LIGHTBLUE_EX + (Style.DIM if dim else ''),
+        prefix=Fore.LIGHTBLUE_EX + (Style.DIM if dim else '') + '[INF] ',
     )
 
 def print_success(
@@ -75,7 +86,7 @@ def print_success(
     dim: bool = False,
 ) -> None:
     __print(values, sep=sep, end=end, file=file, flush=flush,
-        prefix=Fore.GREEN + (Style.DIM if dim else ''),
+        prefix=Fore.GREEN + (Style.DIM if dim else '') + '[OK] ',
     )
 
 def print_warning(
@@ -87,7 +98,7 @@ def print_warning(
     dim: bool = False,
 ) -> None:
     __print(values, sep=sep, end=end, file=file, flush=flush,
-        prefix=Fore.YELLOW + (Style.DIM if dim else ''),
+        prefix=Fore.YELLOW + (Style.DIM if dim else '') + '[WRN] ',
     )
 
 def print_error(
@@ -99,5 +110,19 @@ def print_error(
     dim: bool = False,
 ) -> None:
     __print(values, sep=sep, end=end, file=file, flush=flush,
-        prefix=Fore.RED + (Style.DIM if dim else ''),
+        prefix=Fore.RED + (Style.DIM if dim else '') + '[ERR] ',
     )
+
+def print_fatal(
+    *values: object,
+    sep: Optional[str] = ' ',
+    end: Optional[str] = linesep,
+    file: Optional[SupportsWrite[str]] = stderr,
+    flush: bool = False,
+    dim: bool = False,
+    exit_code: int = 1,
+) -> None:
+    __print(values, sep=sep, end=end, file=file, flush=flush,
+        prefix=Fore.RED + (Style.DIM if dim else '') + '[FTL] ',
+    )
+    exit(exit_code)
