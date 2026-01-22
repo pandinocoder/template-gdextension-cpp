@@ -279,7 +279,7 @@ match opts.subcommand:
             print_notice('Creating a symlink for Godot...', dim=True)
             if path_godot_symlink.exists():
                 path_godot_symlink_resolved = path_godot_symlink.resolve()
-                if str(path_godot_symlink_resolved) == path_godot_executable:
+                if path_godot_symlink_resolved == path_godot_executable:
                     print_debug('\tSkipping because the symlink exists and already points where it should')
                 else:
                     print_warning('%s == %s' % (path_godot_symlink_resolved, path_godot_executable))
