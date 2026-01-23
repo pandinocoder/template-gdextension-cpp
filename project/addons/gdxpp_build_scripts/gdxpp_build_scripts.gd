@@ -50,10 +50,11 @@ func _update_file(p_path_to_file: String, p_content: String) -> void:
 			err_open
 		])
 	else:
-		if fa_target_file.store_string(p_content):
+		fa_target_file.store_string(p_content)
+		var err_store_string := fa_target_file.get_error()
+		if not err_store_string:
 			print("[GDXPPBS] Updated %s" % [file_name])
 		else:
-			var err_store_string := fa_target_file.get_error()
 			push_error("Failed to update %s\n\tPath: %s\n\t Error (%d): %s" % [
 				file_name,
 				p_path_to_file,
