@@ -59,7 +59,7 @@ parser_build.add_argument('-p', '--platform', type=Platform, choices=Platform.ge
 parser_build.add_argument('--skip-godot-cpp', action=argparse.BooleanOptionalAction, default=False, help='if godot-cpp should be compiled before the extensions (by default it will be)')
 parser_build.add_argument('-t', '--target', choices=['debug', 'release'], default='debug', help='the Godot build template to use, default release (debug and release are shorthand for template_debug and template_release respectively)')
 parser_build.add_argument('--use-hot-reload', action=argparse.BooleanOptionalAction, help="whether or not to enable hot reloading of the binaries, on by default for debug and off by default for release")
-parser_build.add_argument('--use-llvm', action=argparse.BooleanOptionalAction, default=True, help='if LLVM should be used as the compiler (default true)')
+parser_build.add_argument('--use-llvm', action=argparse.BooleanOptionalAction, default=False, help='if LLVM should be used as the compiler (default true)')
 parser_build.add_argument('--use-mingw', action=argparse.BooleanOptionalAction, default=True, help="whether or not to use MinGW, only has an effect on Windows")
 parser_build.add_argument('--use-static-cpp', action=argparse.BooleanOptionalAction, help="whether or not to statically link libgcc/libstdc++ for portability, off by default for debug and on by default for release")
 
@@ -67,6 +67,7 @@ parser_prepare = subparsers.add_parser(
     'prepare',
     help='prepare the local environment for building GDExtensions and running the project'
 )
+parser_prepare.add_argument('--submodules', action=argparse.BooleanOptionalAction, default=True, help='clone/update all submodules (default true)')
 
 parser_run = subparsers.add_parser(
     'run',
@@ -123,7 +124,7 @@ match opts.subcommand:
                     print_error('scons exited with code ', godot_cpp_scons_ret)
                     exit(3)
             except Exception as err:
-                print_error('Error occurred building godot-cpp: ', err)
+                print_error('Error occurred building godot-cpp: %s' % err)
                 exit(-3)
 
         try:
@@ -144,7 +145,7 @@ match opts.subcommand:
                 print_error('scons exited with code %d' % extensions_scons_ret)
                 exit(4)
         except Exception as err:
-            print_error('Error occurred building extensions: ', err)
+            print_error('Error occurred building extensions: %s' % err)
             exit(-4)
 
         try:
@@ -216,29 +217,54 @@ match opts.subcommand:
             print_success('Build successful')
 
         except Exception as err:
-            print_error('Error occurred checking for linker errors: ', err)
+            print_error('Error occurred checking for linker errors: %s' % err)
             exit(-5)
 
     case "prepare":
         print_notice('Preparing project in "%s"...' % path_repo_root)
 
-        command_git_submodule_update_init_recursive = 'git submodule update --init --recursive'
+        path_godot_symlink = path_repo_root.joinpath('godot')
         try:
-            print_notice('Ensuring vendor submodules are properly initialized...', dim=True)
-            output = subprocess.check_output(
-                command_git_submodule_update_init_recursive.split(' '),
-                cwd=path_repo_root,
-                encoding='utf-8'
-            )
-            output_lines = output.splitlines(keepends=False)
-            if len(output_lines) > 1:
-                print_debug(os.linesep.join(map(lambda line: '\t' + line, output_lines)).strip(), sep=linesep)
-        except subprocess.CalledProcessError as called_process_error:
-            print_error('\t%s' % called_process_error)
-            exit(3)
+            print_notice('Creating a symlink for Godot...', dim=True)
+            if path_godot_symlink.exists():
+                path_godot_symlink_resolved = path_godot_symlink.resolve()
+                if path_godot_symlink_resolved == path_godot_executable:
+                    print_debug('\tSkipping because the symlink exists and already points where it should')
+                else:
+                    print_warning('Recreating symlink because it points to "%s" instead of "%s"' % (path_godot_symlink_resolved, path_godot_executable))
+                    path_godot_symlink.unlink(missing_ok=True)
+                    os.symlink(path_godot_executable, path_godot_symlink)
+            else:
+                os.symlink(path_godot_executable, path_godot_symlink)
         except Exception as err:
-            print_error('Unexpected error updating submodules: %s' % err)
+            print_error('Unexpected error creating a symlink to ./godot: %s' % err)
+            if Platform.get_current() == Platform.Windows:
+                print_notice(
+                    'Are you running as an ' + underline('administrator') + '? If not, try running the following in ' + underline('Powershell as an Administrator') + ':',
+                    '\n' + STYLE_UNDERLINE + 'New-Item -ItemType SymbolicLink -Path "%s" -Target "%s"' % (path_godot_symlink, path_godot_executable)
+                )
             exit(-3)
+
+        if opts.submodules:
+            command_git_submodule_update_init_recursive = 'git submodule update --init --recursive'
+            try:
+                print_notice('Ensuring vendor submodules are properly initialized...', dim=True)
+                output = subprocess.check_output(
+                    command_git_submodule_update_init_recursive.split(' '),
+                    cwd=path_repo_root,
+                    encoding='utf-8'
+                )
+                output_lines = output.splitlines(keepends=False)
+                if len(output_lines) > 1:
+                    print_debug(os.linesep.join(map(lambda line: '\t' + line, output_lines)).strip(), sep=linesep)
+            except subprocess.CalledProcessError as called_process_error:
+                print_error('\t%s' % called_process_error)
+                exit(4)
+            except Exception as err:
+                print_error('Unexpected error updating submodules: %s' % err)
+                exit(-4)
+        else:
+            print_notice('Skipping clone/update of submodules due to command line option...', dim=True)
 
         try:
             print_notice('Dumping extension_api.json into repository root...', dim=True)
@@ -252,10 +278,10 @@ match opts.subcommand:
                 print_debug(os.linesep.join(map(lambda line: '\t' + line, output_lines)).strip(), sep=linesep)
         except subprocess.CalledProcessError as called_process_error:
             print_error('\t%s' % called_process_error)
-            exit(4)
+            exit(5)
         except Exception as err:
             print_error('Unexpected error dumping extension_api.json into repository root: %s' % err)
-            exit(-4)
+            exit(-5)
 
         try:
             print_notice('Dumping extension_api.json and gdextension_interface.h into vendor/godot-cpp...', dim=True)
@@ -269,31 +295,9 @@ match opts.subcommand:
                 print_debug(os.linesep.join(map(lambda line: '\t' + line, output_lines)).strip(), sep=linesep)
         except subprocess.CalledProcessError as called_process_error:
             print_error('\t%s' % called_process_error)
-            exit(5)
+            exit(6)
         except Exception as err:
             print_error('Unexpected error dumping extension_api.json and gdextension_interface.h into vendor/godot-cpp: %s' % err)
-            exit(-5)
-
-        path_godot_symlink = path_repo_root.joinpath('godot')
-        try:
-            print_notice('Creating a symlink for Godot...', dim=True)
-            if path_godot_symlink.exists():
-                path_godot_symlink_resolved = path_godot_symlink.resolve()
-                if path_godot_symlink_resolved == path_godot_executable:
-                    print_debug('\tSkipping because the symlink exists and already points where it should')
-                else:
-                    print_warning('%s == %s' % (path_godot_symlink_resolved, path_godot_executable))
-                    # path_godot_symlink.unlink(missing_ok=True)
-                    os.symlink(path_godot_executable, path_godot_symlink)
-            else:
-                os.symlink(path_godot_executable, path_godot_symlink)
-        except Exception as err:
-            print_error('Unexpected error creating a symlink to ./godot: %s' % err)
-            if Platform.get_current() == Platform.Windows:
-                print_notice(
-                    'Are you running as an ' + underline('administrator') + '? If not, try running the following in ' + underline('Powershell as an Administrator') + ':',
-                    '\n' + STYLE_UNDERLINE + 'New-Item -ItemType SymbolicLink -Path "%s" -Target "%s"' % (path_godot_symlink, path_godot_executable)
-                )
             exit(-6)
 
         print_success('Successfully completed repository preparation')

@@ -84,6 +84,8 @@ class Opts(argparse.Namespace):
 
 #region Prepare Options
 
+    submodules: bool
+
     def __validate__prepare__(self) -> void:
         pass
 
