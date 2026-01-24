@@ -1,7 +1,13 @@
 #include "sample_node_2d.h"
 
 #include <godot/classdb.h>
-#include <godot_cpp/core/math_defs.hpp>
+
+// #define HOTRELOAD_ENABLE_ANGLE_RELOAD
+// #define HOTRELOAD_ENABLE_PRINT
+
+#ifdef HOTRELOAD_ENABLE_PRINT
+#include <godot/print.h>
+#endif
 
 using namespace godot;
 using namespace sample;
@@ -16,14 +22,16 @@ void SampleNode2D::_bind_methods() {
         "p_value"
     );
 
-    // BIND_PROPERTY(
-    //     ::godot::PropertyInfo(::godot::Variant::FLOAT, "angle_reload"),
-    //     "get_angle_reload",
-    //     &SampleNode2D::get_angle_reload,
-    //     "set_angle_reload",
-    //     &SampleNode2D::set_angle_reload,
-    //     "p_value"
-    // );
+#ifdef HOTRELOAD_ENABLE_ANGLE_RELOAD
+    BIND_PROPERTY(
+        ::godot::PropertyInfo(::godot::Variant::FLOAT, "angle_reload"),
+        "get_angle_reload",
+        &SampleNode2D::get_angle_reload,
+        "set_angle_reload",
+        &SampleNode2D::set_angle_reload,
+        "p_value"
+    );
+#endif
 }
 
 void SampleNode2D::_notification(int64_t p_what) {
@@ -36,6 +44,11 @@ void SampleNode2D::_notification(int64_t p_what) {
                 Math::sin((real_t)_angle) * 128.0,
                 Math::cos((real_t)_angle) * 128.0
             ));
+
+#ifdef HOTRELOAD_ENABLE_PRINT
+            ::godot::fprint("Processing %d", get_process_delta_time());
+#endif
+
             break;
         }
     }
