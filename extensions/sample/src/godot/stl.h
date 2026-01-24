@@ -5,7 +5,7 @@
 #include <string>
 
 namespace godot {
-    ::std::string to_stl_utf8(const ::godot::String &value);
-    ::std::string to_stl_utf8(const ::godot::StringName &value);
+    static ::std::string to_stl_utf8(const ::godot::String &value);
+    static ::std::string to_stl_utf8(const ::godot::StringName &value);
 }
 
