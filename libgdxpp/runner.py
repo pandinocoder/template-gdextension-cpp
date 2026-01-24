@@ -59,7 +59,7 @@ parser_build.add_argument('-p', '--platform', type=Platform, choices=Platform.ge
 parser_build.add_argument('--skip-godot-cpp', action=argparse.BooleanOptionalAction, default=False, help='if godot-cpp should be compiled before the extensions (by default it will be)')
 parser_build.add_argument('-t', '--target', choices=['debug', 'release'], default='debug', help='the Godot build template to use, default release (debug and release are shorthand for template_debug and template_release respectively)')
 parser_build.add_argument('--use-hot-reload', action=argparse.BooleanOptionalAction, help="whether or not to enable hot reloading of the binaries, on by default for debug and off by default for release")
-parser_build.add_argument('--use-llvm', action=argparse.BooleanOptionalAction, default=False, help='if LLVM should be used as the compiler (default true)')
+parser_build.add_argument('--use-llvm', action=argparse.BooleanOptionalAction, default=True, help='if LLVM should be used as the compiler (default true)')
 parser_build.add_argument('--use-mingw', action=argparse.BooleanOptionalAction, default=True, help="whether or not to use MinGW, only has an effect on Windows")
 parser_build.add_argument('--use-static-cpp', action=argparse.BooleanOptionalAction, help="whether or not to statically link libgcc/libstdc++ for portability, off by default for debug and on by default for release")
 

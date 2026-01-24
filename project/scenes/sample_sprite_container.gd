@@ -5,7 +5,7 @@ extends SampleNode2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	#SampleRefCounted.create()
+	var src := SampleRefCounted.create()
 	pass # Replace with function body.
 
 
